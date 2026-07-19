@@ -163,13 +163,21 @@ class ContractTests(unittest.TestCase):
 
     def test_readme_documents_all_hosts(self):
         text = read("README.md")
+        self.assertIn(
+            """### Codex
+
+```sh
+codex plugin marketplace add baldaworks/hostplugin
+codex plugin add hostplugin@hostplugin
+```""",
+            text,
+        )
         for fragment in [
             "$hostplugin:author",
             "/hostplugin:author",
             "/hostplugin-author",
-            "codex plugin marketplace add baldaworks/hostplugin",
             "claude plugin marketplace add baldaworks/hostplugin",
-            "grok plugin marketplace add baldaworks/hostplugin",
+            "grok plugin install 'baldaworks/hostplugin#plugins/hostplugin' --trust",
             "copilot plugin marketplace add baldaworks/hostplugin",
             "agent plugin marketplace add",
             "integrations/opencode",

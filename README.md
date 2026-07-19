@@ -8,16 +8,62 @@ HostPlugin inspects a project or CLI, maps the requested behavior onto each host
 
 HostPlugin supports Codex, Claude Code, Grok Build, GitHub Copilot CLI, OpenCode, and Cursor.
 
-| Host | Install | Invoke |
-| --- | --- | --- |
-| Codex | `codex plugin marketplace add baldaworks/hostplugin` then `codex plugin add hostplugin@hostplugin` | `$hostplugin:author` |
-| Claude Code | `claude plugin marketplace add baldaworks/hostplugin` then `claude plugin install hostplugin@hostplugin --scope user` | `/hostplugin:author` |
-| Grok Build | `grok plugin marketplace add baldaworks/hostplugin` then `grok plugin install hostplugin@hostplugin --trust` | `/hostplugin-author` |
-| Copilot CLI | `copilot plugin marketplace add baldaworks/hostplugin` then `copilot plugin install hostplugin@hostplugin` | `/hostplugin-author` |
-| Cursor | `agent plugin marketplace add https://github.com/baldaworks/hostplugin.git`, then install HostPlugin from the marketplace UI | `hostplugin-author` skill |
-| OpenCode | Clone this repository and copy `integrations/opencode/{skills,references,commands}` into the matching project `.opencode/` directories | `/hostplugin-author` |
+### Codex
 
-OpenCode global skills may instead be copied below `~/.config/opencode/`; keep the `skills/` and `references/` relative layout together.
+```sh
+codex plugin marketplace add baldaworks/hostplugin
+codex plugin add hostplugin@hostplugin
+```
+
+Invoke with `$hostplugin:author`.
+
+### Claude Code
+
+```sh
+claude plugin marketplace add baldaworks/hostplugin
+claude plugin install hostplugin@hostplugin --scope user
+```
+
+Invoke with `/hostplugin:author`.
+
+### Grok Build
+
+```sh
+grok plugin install 'baldaworks/hostplugin#plugins/hostplugin' --trust
+```
+
+Invoke with `/hostplugin-author`.
+
+### GitHub Copilot CLI
+
+```sh
+copilot plugin marketplace add baldaworks/hostplugin
+copilot plugin install hostplugin@hostplugin
+```
+
+Invoke with `/hostplugin-author`.
+
+### Cursor
+
+```sh
+agent plugin marketplace add https://github.com/baldaworks/hostplugin.git
+```
+
+Then install HostPlugin from the marketplace UI and invoke the `hostplugin-author` skill.
+
+### OpenCode
+
+From the project where you want to install HostPlugin, run:
+
+```sh
+hostplugin_source="$(mktemp -d)"
+git clone --depth 1 https://github.com/baldaworks/hostplugin.git "$hostplugin_source"
+mkdir -p .opencode
+cp -R "$hostplugin_source"/integrations/opencode/{skills,references,commands} .opencode/
+rm -rf "$hostplugin_source"
+```
+
+Invoke with `/hostplugin-author`. For a global installation, copy the same directories below `~/.config/opencode/` instead; keep the `skills/` and `references/` relative layout together.
 
 ## Use
 
