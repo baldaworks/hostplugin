@@ -1,0 +1,20 @@
+{
+  "name": "hostplugin",
+  "interface": {
+    "displayName": "HostPlugin"
+  },
+  "plugins": [
+    {
+      "name": "hostplugin",
+      "source": {
+        "source": "local",
+        "path": "./plugins/hostplugin"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

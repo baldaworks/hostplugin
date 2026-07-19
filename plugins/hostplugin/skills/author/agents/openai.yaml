@@ -1,0 +1,4 @@
+interface:
+  display_name: "HostPlugin Author"
+  short_description: "Author portable coding-agent plugins"
+  default_prompt: "Use $hostplugin:author to inspect this project and author a portable host plugin."

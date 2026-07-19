@@ -1,0 +1,16 @@
+{
+  "name": "hostplugin",
+  "owner": {
+    "name": "Baldaworks"
+  },
+  "metadata": {
+    "description": "Portable coding-agent plugin authoring for Cursor."
+  },
+  "plugins": [
+    {
+      "name": "hostplugin",
+      "source": "./plugins/hostplugin",
+      "description": "Author and update portable plugins for coding-agent hosts."
+    }
+  ]
+}

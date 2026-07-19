@@ -1,0 +1,14 @@
+{
+  "name": "hostplugin",
+  "version": "0.1.0",
+  "description": "Author and update portable plugins for coding-agent hosts.",
+  "author": {
+    "name": "Baldaworks",
+    "url": "https://github.com/baldaworks"
+  },
+  "homepage": "https://github.com/baldaworks/hostplugin",
+  "repository": "https://github.com/baldaworks/hostplugin",
+  "license": "MIT",
+  "keywords": ["plugins", "agent-skills", "coding-agents"],
+  "skills": "./prefixed-skills/"
+}

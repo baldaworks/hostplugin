@@ -1,0 +1,18 @@
+{
+  "name": "hostplugin",
+  "owner": {
+    "name": "Baldaworks",
+    "url": "https://github.com/baldaworks"
+  },
+  "description": "Marketplace for portable coding-agent plugin authoring in Grok Build.",
+  "plugins": [
+    {
+      "name": "hostplugin",
+      "description": "Author and update portable plugins for coding-agent hosts.",
+      "version": "0.1.0",
+      "source": "./plugins/hostplugin",
+      "homepage": "https://github.com/baldaworks/hostplugin",
+      "keywords": ["plugins", "agent-skills", "coding-agents"]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "hostplugin",
+  "version": "0.1.0",
+  "description": "Author and update portable plugins for coding-agent hosts.",
+  "author": {
+    "name": "Baldaworks",
+    "url": "https://github.com/baldaworks"
+  },
+  "homepage": "https://github.com/baldaworks/hostplugin",
+  "repository": "https://github.com/baldaworks/hostplugin",
+  "license": "MIT",
+  "keywords": ["plugins", "agent-skills", "codex", "claude-code", "cursor"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "HostPlugin",
+    "shortDescription": "Author portable coding-agent plugins.",
+    "longDescription": "Inspect a project or CLI, design native components for each selected coding-agent host, preview the complete change, and write a validated plugin only after confirmation.",
+    "developerName": "Baldaworks",
+    "category": "Developer Tools",
+    "capabilities": ["Read", "Write"],
+    "defaultPrompt": [
+      "$hostplugin:author Inspect this CLI and author a portable plugin.",
+      "$hostplugin:author Add Cursor and OpenCode support to this plugin.",
+      "$hostplugin:author Audit and update this existing host plugin."
+    ]
+  }
+}

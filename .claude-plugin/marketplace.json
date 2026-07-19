@@ -1,0 +1,21 @@
+{
+  "name": "hostplugin",
+  "owner": {
+    "name": "Baldaworks"
+  },
+  "metadata": {
+    "description": "Portable coding-agent plugin authoring for Claude Code.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "hostplugin",
+      "description": "Author and update portable plugins for coding-agent hosts.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Baldaworks"
+      },
+      "source": "./plugins/hostplugin"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "name": "hostplugin",
+  "owner": {
+    "name": "Baldaworks"
+  },
+  "metadata": {
+    "description": "Portable coding-agent plugin authoring for GitHub Copilot CLI.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "hostplugin",
+      "description": "Author and update portable plugins for coding-agent hosts.",
+      "version": "0.1.0",
+      "source": "./plugins/hostplugin",
+      "author": {
+        "name": "Baldaworks",
+        "url": "https://github.com/baldaworks"
+      },
+      "homepage": "https://github.com/baldaworks/hostplugin",
+      "repository": "https://github.com/baldaworks/hostplugin",
+      "license": "MIT",
+      "keywords": ["plugins", "agent-skills", "coding-agents"]
+    }
+  ]
+}
