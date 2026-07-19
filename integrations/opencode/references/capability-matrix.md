@@ -9,7 +9,7 @@ Last reviewed: 2026-07-19.
 | Skills | Native | Native | Native | Native | Native | Native |
 | Commands | No plugin field | Native/legacy | Claude-compatible | Native | Native | Native |
 | Agents/subagents | Not a Codex plugin component | Native | Native | Native | Native | Native |
-| Hooks | Not accepted by the current Codex plugin validator | Native | Native | Native | Native JS/TS plugin events | Native |
+| Hooks | Native (trust-gated) | Native | Native | Native | Native JS/TS plugin events | Native |
 | MCP servers | Native | Native | Native | Native | Native config | Native |
 | LSP servers | Not a Codex plugin component | Native | Native | Native | Host configuration only | Verify per plugin contract |
 | Rules/instructions | Skill or project instructions | Plugin skills/components | Claude-compatible | Skill or agent | AGENTS.md/skills | Native rules |

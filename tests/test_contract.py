@@ -79,6 +79,7 @@ class ContractTests(unittest.TestCase):
             ".claude-plugin/marketplace.json",
             ".grok-plugin/marketplace.json",
             ".github/plugin/marketplace.json",
+            ".cursor-plugin/marketplace.json",
         ]:
             with self.subTest(path=path):
                 manifest = load_json(path)
@@ -133,14 +134,68 @@ class ContractTests(unittest.TestCase):
 
     def test_references_cover_every_host_and_are_officially_sourced(self):
         references = PLUGIN / "references"
-        for host in ["codex", "claude", "grok", "copilot", "opencode", "cursor"]:
+        expected_sources = {
+            "codex": [
+                "https://learn.chatgpt.com/docs/build-plugins",
+                "https://learn.chatgpt.com/docs/hooks",
+            ],
+            "claude": ["https://code.claude.com/docs/en/plugins-reference"],
+            "grok": [
+                "https://docs.x.ai/build/features/skills-plugins-marketplaces"
+            ],
+            "copilot": [
+                "https://docs.github.com/en/copilot/reference/"
+                "copilot-cli-reference/cli-plugin-reference"
+            ],
+            "opencode": ["https://opencode.ai/docs/plugins"],
+            "cursor": [
+                "https://cursor.com/docs/plugins",
+                "https://cursor.com/docs/reference/plugins",
+                "https://github.com/cursor/plugin-template",
+            ],
+        }
+        for host, sources in expected_sources.items():
             with self.subTest(host=host):
                 text = (references / f"{host}.md").read_text(encoding="utf-8")
                 self.assertIn("2026-07-19", text)
-                self.assertIn("https://", text)
+                for source in sources:
+                    self.assertIn(source, text)
         matrix = (references / "capability-matrix.md").read_text(encoding="utf-8")
         for host in ["Codex", "Claude Code", "Grok Build", "Copilot CLI", "OpenCode", "Cursor"]:
             self.assertIn(host, matrix)
+
+    def test_codex_hooks_are_native_and_documented(self):
+        matrix = read("plugins/hostplugin/references/capability-matrix.md")
+        self.assertIn("| Hooks | Native (trust-gated) |", matrix)
+
+        reference = read("plugins/hostplugin/references/codex.md")
+        for fragment in [
+            "hooks/hooks.json",
+            "trust-gated components",
+            "`${PLUGIN_ROOT}`",
+            "`${PLUGIN_DATA}`",
+            "validator-version conflict",
+            "partial native validation",
+            "do not misclassify the component as unsupported",
+        ]:
+            with self.subTest(fragment=fragment):
+                self.assertIn(fragment, reference)
+
+    def test_cursor_metadata_uses_documented_locations(self):
+        plugin = json.loads(
+            (PLUGIN / ".cursor-plugin/plugin.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual("HostPlugin", plugin["displayName"])
+        for field in ["publisher", "category", "tags"]:
+            with self.subTest(field=field):
+                self.assertNotIn(field, plugin)
+
+        marketplace = load_json(".cursor-plugin/marketplace.json")
+        self.assertEqual(VERSION, marketplace["metadata"]["version"])
+        entry = marketplace["plugins"][0]
+        self.assertEqual(VERSION, entry["version"])
+        self.assertEqual("developer-tools", entry["category"])
+        self.assertEqual(["plugins", "skills", "authoring"], entry["tags"])
 
     def test_codex_ui_metadata_names_the_installed_skill(self):
         metadata = (PLUGIN / "skills/author/agents/openai.yaml").read_text(encoding="utf-8")

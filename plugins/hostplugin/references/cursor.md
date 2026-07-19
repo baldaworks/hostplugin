@@ -4,14 +4,15 @@ Last reviewed: 2026-07-19.
 
 Official references:
 
-- https://cursor.com/blog/marketplace
-- https://cursor.com/changelog/2-5
+- https://cursor.com/docs/plugins
+- https://cursor.com/docs/reference/plugins
+- https://github.com/cursor/plugin-template
 
 ## Marketplace and manifest
 
-Use `.cursor-plugin/marketplace.json` at the marketplace root and `.cursor-plugin/plugin.json` inside the plugin. Include Cursor-facing `displayName`, publisher, category, and supported component paths without copying fields that Cursor does not document.
+Use `.cursor-plugin/marketplace.json` at the marketplace root and `.cursor-plugin/plugin.json` inside the plugin. Keep `displayName` and publisher identity in the plugin manifest through `displayName` and `author`. Put marketplace-only presentation fields such as `category` and `tags` on the marketplace entry, and keep manifest and marketplace versions synchronized.
 
-Cursor plugins can bundle skills, subagents, rules, hooks, MCP servers, and commands. Treat MCP Apps as an MCP-specific UI capability, not as a Codex `.app.json` equivalent.
+Cursor plugins can bundle skills, agents, rules, hooks, MCP servers, and commands. Treat MCP Apps as an MCP-specific UI capability, not as a Codex `.app.json` equivalent.
 
 Use prefixed skill names such as `<plugin>-<skill>` unless current Cursor documentation guarantees plugin namespacing for the installation path.
 

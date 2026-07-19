@@ -4,13 +4,17 @@
     "name": "Baldaworks"
   },
   "metadata": {
-    "description": "Portable coding-agent plugin authoring for Cursor."
+    "description": "Portable coding-agent plugin authoring for Cursor.",
+    "version": "0.1.0"
   },
   "plugins": [
     {
       "name": "hostplugin",
       "source": "./plugins/hostplugin",
-      "description": "Author and update portable plugins for coding-agent hosts."
+      "description": "Author and update portable plugins for coding-agent hosts.",
+      "version": "0.1.0",
+      "category": "developer-tools",
+      "tags": ["plugins", "skills", "authoring"]
     }
   ]
 }
