@@ -5,7 +5,7 @@ import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "plugins" / "hostplugin"
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 AGENT_PLUGINS_SCHEMA = (
     "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
 )
@@ -320,6 +320,21 @@ codex plugin add hostplugin@hostplugin
             "Agent Skills and MCP servers",
         ]:
             self.assertIn(fragment, text)
+
+    def test_release_workflow_is_tag_driven_and_version_gated(self):
+        workflow = read(".github/workflows/release.yml")
+        for fragment in [
+            'tags:',
+            '- "v*"',
+            "contents: write",
+            "python3 -m unittest discover -s tests -v",
+            'test "${GITHUB_REF_NAME}" = "v${plugin_version}"',
+            'gh release create "${GITHUB_REF_NAME}"',
+            "--verify-tag",
+            "--generate-notes",
+        ]:
+            with self.subTest(fragment=fragment):
+                self.assertIn(fragment, workflow)
 
 
 if __name__ == "__main__":
