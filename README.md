@@ -6,7 +6,9 @@ HostPlugin inspects a project or CLI, maps the requested behavior onto each host
 
 ## Install
 
-HostPlugin supports Codex, Claude Code, Grok Build, GitHub Copilot CLI, OpenCode, and Cursor.
+HostPlugin supports Codex, Claude Code, Grok Build, GitHub Copilot CLI,
+OpenCode, and Cursor. It also supports the vendor-neutral Agent Plugins 1.0.0
+portable package standard.
 
 ### Codex
 
@@ -65,6 +67,13 @@ rm -rf "$hostplugin_source"
 
 Invoke with `/hostplugin-author`. For a global installation, copy the same directories below `~/.config/opencode/` instead; keep the `skills/` and `references/` relative layout together.
 
+### Agent Plugins 1.0.0
+
+The directory `plugins/hostplugin` is an Agent Plugins 1.0.0 package. A
+compatible client can load that directory through its documented local-plugin or
+installation workflow. The Agent Plugins standard itself does not define a
+universal installation command, marketplace, registry, or invocation syntax.
+
 ## Use
 
 Describe the plugin outcome in natural language:
@@ -84,9 +93,17 @@ No files are written until you confirm that preview. Unsupported components are 
 
 ## Components
 
-HostPlugin understands the current native component families of each target, including skills, commands, agents, hooks, MCP and LSP integrations, rules, Codex apps, Cursor subagents, and OpenCode JS/TS plugins. It does not pretend those component models are interchangeable.
+HostPlugin understands the current native component families of each host,
+including skills, commands, agents, hooks, MCP and LSP integrations, rules,
+Codex apps, Cursor subagents, and OpenCode JS/TS plugins. It also understands the
+Agent Plugins 1.0.0 portable core: Agent Skills and MCP servers in fixed package
+locations. Other component families are not portable Agent Plugins components
+and are never translated silently.
 
-Provider contracts are pinned under `plugins/hostplugin/references/` and include their review date and official sources. Installed host help and native validators take precedence when they reveal a newer contract.
+Provider and portable-standard contracts are pinned under
+`plugins/hostplugin/references/` and include their review date and official
+sources. Installed host help and native validators take precedence when they
+reveal a newer contract.
 
 ## Development
 

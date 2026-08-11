@@ -1,11 +1,14 @@
 ---
 name: hostplugin-author
-description: Author, audit, or update portable plugins for Codex, Claude Code, Grok Build, GitHub Copilot CLI, OpenCode, and Cursor. Use when an agent must inspect a project or CLI, design host-native skills, commands, agents, hooks, MCP/LSP integrations, rules, or apps, scaffold either a standalone marketplace or an embedded plugin, and preview every file before writing.
+description: Author, audit, or update plugins for Agent Plugins 1.0.0, Codex, Claude Code, Grok Build, GitHub Copilot CLI, OpenCode, and Cursor. Use when an agent must inspect a project or CLI, design portable or host-native skills, commands, agents, hooks, MCP/LSP integrations, rules, or apps, scaffold either a standalone marketplace or an embedded plugin, and preview every file before writing.
 ---
 
 # HostPlugin Author
 
-Create or update coding-agent plugins without inventing host capabilities or CLI commands. Treat CLI integrations as the primary workflow while supporting instruction-only, MCP-backed, and host-specific plugins.
+Create or update coding-agent plugins without inventing host capabilities,
+portable-standard behavior, or CLI commands. Treat CLI integrations as the
+primary workflow while supporting Agent Plugins packages, instruction-only,
+MCP-backed, and host-specific plugins.
 
 ## Core rules
 
@@ -27,6 +30,7 @@ Then read the reference for every selected target:
 - `../../references/copilot.md`
 - `../../references/opencode.md`
 - `../../references/cursor.md`
+- `../../references/agent-plugins.md`
 
 Treat those files as pinned guidance, not timeless truth. Prefer an installed host's read-only help and validator when available. If observed behavior conflicts with a reference, stop and report the conflict instead of guessing.
 
@@ -37,12 +41,21 @@ Treat those files as pinned guidance, not timeless truth. Prefer an installed ho
 Determine whether the request creates a new plugin, updates an existing plugin, or audits one before an update. Resolve:
 
 - standalone marketplace repository or embedded `plugins/<name>` layout;
-- target hosts, defaulting to all six only when the user asks for a portable plugin;
+- targets, distinguishing the six host targets from Agent Plugins as a portable
+  standard;
 - plugin identity, version, description, publisher, repository, license, and intended invocation names;
 - requested component inventory and whether any component is host-specific;
 - output root and whether it already contains related files.
 
 Ask only for product decisions that repository inspection cannot answer. For a new plugin, propose version `0.1.0`. For an existing plugin, preserve its version until the user confirms a SemVer change.
+
+An explicit Agent Plugins request selects that standard. `All supported hosts`
+continues to mean the six host targets. A generic portable-plugin request
+selects all six hosts and also selects Agent Plugins when its component inventory
+fits the portable core. If any requested component is unsupported by that core,
+report only the Agent Plugins slice as unsupported and ask whether to omit the
+standard, omit the component, keep it host-native, or explicitly design a
+client extension. Agent Plugins defines no invocation namespace or CLI.
 
 ### 2. Ground in the repository
 
@@ -59,13 +72,18 @@ Do not infer commands from naming conventions. If the executable is unavailable,
 
 ### 3. Build a capability report
 
-Map every requested semantic component to every selected host. Report one of:
+Map every requested semantic component to every selected host or portable
+standard. Report one of:
 
-- `native`: the host has the same component type and the contract is verified;
-- `host-specific`: the component is intentionally emitted only for named hosts;
-- `unsupported`: the host lacks the component or its contract cannot be verified.
+- `native`: the selected target has the same component type and the contract is verified;
+- `host-specific`: the component is intentionally emitted only for named hosts
+  or an explicitly approved client extension;
+- `unsupported`: the selected target lacks the component or its contract cannot be verified.
 
-For `unsupported`, stop and ask the user to drop the host, drop the component, or explicitly redesign it as a different component. Do not choose an adaptation automatically.
+For `unsupported`, stop and ask the user to drop the target, drop the component,
+keep it in a selected host-native package, or explicitly redesign it. Never
+translate unsupported behavior into an Agent Plugins client extension
+automatically. An approved extension remains host-specific and non-portable.
 
 ### 4. Design the portable layout
 
@@ -74,6 +92,15 @@ Use canonical skill names in namespaced hosts and plugin-prefixed names in flat-
 For shared semantics with incompatible wire formats, create host-specific directories and point each manifest at its own directory. Share files only when the selected hosts consume the exact same format and path semantics.
 
 For an embedded plugin, update only the selected repository marketplaces. For a standalone plugin, make the repository root the marketplace root and place the plugin below `plugins/<name>`.
+
+For Agent Plugins 1.0.0, make the package directory the plugin root. Create the
+required closed-schema `plugin.json`, place Agent Skills only at immediate
+children of `skills/`, and create root `mcp.json` only when MCP servers are
+requested. Keep both schema versions equal. Reject invalid names, unknown
+manifest fields, package escapes, invalid transports or URLs, reserved
+`PLUGIN_ROOT`/`PLUGIN_DATA` overrides, unsafe placeholders, and literal secrets
+before writing. Do not create an installer, marketplace, registry, invocation,
+or runtime contract because the standard defines none.
 
 ### 5. Present the preview
 
@@ -98,7 +125,9 @@ Keep secrets out of generated files. Use documented environment-variable placeho
 
 Parse every JSON, YAML, TOML, and frontmatter file. Verify declared paths exist, names match directory conventions, component variants remain semantically aligned, and no placeholders remain.
 
-Run available native validators for selected hosts. Treat an unavailable validator as a reported limitation, not a success. Reinspect the final diff and report:
+Run available native validators for selected hosts and canonical schema plus
+semantic validation for Agent Plugins. Treat an unavailable validator as a
+reported limitation, not a success. Reinspect the final diff and report:
 
 - created and updated files;
 - native validation results and skipped checks;

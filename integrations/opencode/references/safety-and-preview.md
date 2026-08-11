@@ -25,11 +25,15 @@ Show all of the following before writing:
 
 - target root and create/update mode;
 - metadata and proposed version;
-- selected hosts and capability report;
+- selected host and portable-standard targets with their capability report;
 - complete create/modify/preserve/omit file list;
 - concise diff or representative full contents for new files;
 - required permissions, credentials, network access, and external side effects;
 - exact validation commands and known unavailable validators.
+
+For Agent Plugins, separate portable-core capabilities from client extensions.
+Label every approved extension host-specific and non-portable, and never imply
+that the standard defines installation, distribution, invocation, or a runtime.
 
 Ask the user to confirm the preview. A generic request to author a plugin is not confirmation of an unseen implementation.
 

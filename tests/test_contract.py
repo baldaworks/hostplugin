@@ -6,6 +6,9 @@ import unittest
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "plugins" / "hostplugin"
 VERSION = "0.1.0"
+AGENT_PLUGINS_SCHEMA = (
+    "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
+)
 
 
 def read(path):
@@ -33,6 +36,7 @@ class ContractTests(unittest.TestCase):
             if (
                 path.is_file()
                 and ".git" not in path.parts
+                and ".beads" not in path.parts
                 and "__pycache__" not in path.parts
                 and path.suffix != ".pyc"
             ):
@@ -74,7 +78,29 @@ class ContractTests(unittest.TestCase):
                 self.assertEqual(VERSION, manifest["version"])
                 self.assertEqual(skills, manifest["skills"])
 
+    def test_agent_plugins_manifest_is_closed_and_discovers_canonical_skill(self):
+        manifest = json.loads((PLUGIN / "plugin.json").read_text(encoding="utf-8"))
+        allowed_fields = {
+            "$schema",
+            "name",
+            "version",
+            "description",
+            "author",
+            "homepage",
+            "repository",
+            "license",
+            "keywords",
+            "extensions",
+        }
+        self.assertEqual(AGENT_PLUGINS_SCHEMA, manifest["$schema"])
+        self.assertEqual("hostplugin", manifest["name"])
+        self.assertEqual(VERSION, manifest["version"])
+        self.assertLessEqual(set(manifest), allowed_fields)
+        self.assertNotIn("skills", manifest)
+        self.assertTrue((PLUGIN / "skills" / "author" / "SKILL.md").is_file())
+
     def test_marketplace_versions_match_plugin_version(self):
+        self.assertEqual(VERSION, load_json("plugins/hostplugin/plugin.json")["version"])
         for path in [
             ".claude-plugin/marketplace.json",
             ".grok-plugin/marketplace.json",
@@ -104,6 +130,10 @@ class ContractTests(unittest.TestCase):
             "explicit confirmation",
             "Do not publish",
             "unsupported",
+            "Agent Plugins 1.0.0",
+            "../../references/agent-plugins.md",
+            "selected host or portable",
+            "client extension",
         ]:
             with self.subTest(fragment=fragment):
                 self.assertIn(fragment, text)
@@ -123,6 +153,7 @@ class ContractTests(unittest.TestCase):
             "copilot.md",
             "opencode.md",
             "cursor.md",
+            "agent-plugins.md",
         ]
         for skill in paths:
             text = skill.read_text(encoding="utf-8")
@@ -163,6 +194,53 @@ class ContractTests(unittest.TestCase):
         matrix = (references / "capability-matrix.md").read_text(encoding="utf-8")
         for host in ["Codex", "Claude Code", "Grok Build", "Copilot CLI", "OpenCode", "Cursor"]:
             self.assertIn(host, matrix)
+
+    def test_agent_plugins_reference_is_pinned_and_officially_sourced(self):
+        text = read("plugins/hostplugin/references/agent-plugins.md")
+        self.assertIn("Last reviewed: 2026-08-11", text)
+        for source in [
+            "https://agent-plugins.org/specification",
+            "https://agent-plugins.org/plugin-authors/manifest",
+            "https://agent-plugins.org/plugin-authors/skills",
+            "https://agent-plugins.org/plugin-authors/mcp-servers",
+            "https://agent-plugins.org/plugin-authors/client-extensions",
+            AGENT_PLUGINS_SCHEMA,
+            "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+        ]:
+            with self.subTest(source=source):
+                self.assertIn(source, text)
+
+    def test_agent_plugins_capability_report_preserves_portable_floor(self):
+        matrix = read("plugins/hostplugin/references/capability-matrix.md")
+        self.assertIn("Agent Plugins 1.0.0", matrix)
+        self.assertIn(
+            "| Skills | Native | Native | Native | Native | Native | Native | Native |",
+            matrix,
+        )
+        self.assertIn(
+            "| MCP servers | Native | Native | Native | Native | Native config | Native | Native |",
+            matrix,
+        )
+        for component in [
+            "Commands",
+            "Agents/subagents",
+            "Hooks",
+            "LSP servers",
+            "Rules/instructions",
+            "Apps",
+            "Monitors/themes/output styles",
+            "Executables",
+        ]:
+            with self.subTest(component=component):
+                row = next(
+                    line
+                    for line in matrix.splitlines()
+                    if line.startswith(f"| {component} |")
+                )
+                self.assertTrue(
+                    row.endswith("| Unsupported in portable core |"), row
+                )
+        self.assertIn("extensions are non-portable", matrix)
 
     def test_codex_hooks_are_native_and_documented(self):
         matrix = read("plugins/hostplugin/references/capability-matrix.md")
@@ -236,6 +314,10 @@ codex plugin add hostplugin@hostplugin
             "copilot plugin marketplace add baldaworks/hostplugin",
             "agent plugin marketplace add",
             "integrations/opencode",
+            "Agent Plugins 1.0.0",
+            "plugins/hostplugin",
+            "universal installation command, marketplace",
+            "Agent Skills and MCP servers",
         ]:
             self.assertIn(fragment, text)
 
