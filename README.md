@@ -58,20 +58,14 @@ Then install HostPlugin from the marketplace UI and invoke the `hostplugin-autho
 Requires OpenCode 2.x (`opencode --version`). Install the host with
 `@opencode/cli` following the [official installation guide](https://opencode.ai/v2/docs).
 
-From the project where you want to install HostPlugin, run:
+Install HostPlugin from its GitHub release:
 
 ```sh
-hostplugin_source="$(mktemp -d)"
-git clone --depth 1 https://github.com/baldaworks/hostplugin.git "$hostplugin_source"
-mkdir -p .opencode
-cp -R "$hostplugin_source/integrations/opencode/." .opencode/
-rm -rf "$hostplugin_source"
+opencode plugin add 'github:baldaworks/hostplugin#v0.3.0'
 ```
 
-Invoke with `/hostplugin-author`. For a global installation, copy the same directories below `~/.config/opencode/` instead; keep the `skills/` and `references/` relative layout together.
-
-HostPlugin provides skills, references, and a command wrapper for OpenCode.
-Install these files using the copy commands above.
+Invoke with `/hostplugin-author`. The package registers the bundled skill and
+keeps its supporting references available from the installed package.
 
 ### Agent Plugins 1.0.0
 

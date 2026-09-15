@@ -30,8 +30,9 @@ The released executable is `opencode`; verify `opencode --version` and
 For a requested native OpenCode plugin, author a package installable through
 `opencode plugin add`. It accepts npm and Git package specifications, including
 repository subdirectories. Use the packaging and publication workflow below.
-HostPlugin itself is an instruction skill distributed separately; its manual
-skill-copy layout does not constrain how plugins authored with it are published.
+HostPlugin itself is distributed as a native Git package. Its package entrypoint
+registers the bundled instruction skill through the V2 skill API; the same
+package contract applies to plugins authored with it.
 
 Use `.opencode/skills/<id>/SKILL.md`, `.opencode/commands/<name>.md`, and
 `.opencode/agents/<name>.md`; global equivalents live under
@@ -91,7 +92,9 @@ Pin compatible package dependencies and validate the packaged entrypoint.
 CLI plugins use `@opencode/plugin/tui` and a `./tui` package export; CLI-only
 packages belong in global `cli.json`. Keep server and terminal contracts distinct.
 An executable plugin requires an explicit component request, dependency review,
-and execution-risk preview. HostPlugin itself gains no JS/TS runtime package.
+and execution-risk preview. A package entrypoint that only registers bundled
+instruction assets remains skill-only and must not add hooks, tools, servers, or
+other behavior implicitly.
 
 ## Package an authored OpenCode plugin
 
@@ -197,7 +200,10 @@ merely to write or validate package metadata and publication documentation.
 
 Parse frontmatter/config, check reference paths and skill-copy parity, and run
 repository contract tests. Installed v2.0.3 help exposes no dedicated static
-plugin or skill validator: `opencode plugin check` checks package updates.
+plugin or skill validator: `opencode plugin check` checks package updates. For
+HostPlugin itself, the repository contract imports the package entrypoint with
+an isolated skill editor and verifies the packaged registration without
+starting OpenCode.
 `opencode debug config` lists configuration sources; it is not skill validation.
 Do not invent `opencode plugin validate` or reuse V1 `debug skill` commands.
 

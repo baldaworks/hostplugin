@@ -1,6 +1,6 @@
 {
   "name": "hostplugin",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Author and update portable plugins for coding-agent hosts.",
   "author": {
     "name": "Baldaworks"

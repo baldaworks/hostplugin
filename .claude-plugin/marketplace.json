@@ -5,13 +5,13 @@
   },
   "metadata": {
     "description": "Portable coding-agent plugin authoring for Claude Code.",
-    "version": "0.2.0"
+    "version": "0.3.0"
   },
   "plugins": [
     {
       "name": "hostplugin",
       "description": "Author and update portable plugins for coding-agent hosts.",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "author": {
         "name": "Baldaworks"
       },

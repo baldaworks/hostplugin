@@ -1,0 +1,25 @@
+{
+  "name": "hostplugin",
+  "version": "0.3.0",
+  "description": "Author and publish plugins for coding-agent hosts.",
+  "type": "module",
+  "exports": "./integrations/opencode/index.js",
+  "files": [
+    "integrations/opencode/index.js",
+    "integrations/opencode/skills/",
+    "integrations/opencode/references/",
+    "LICENSE",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/baldaworks/hostplugin.git"
+  },
+  "license": "MIT",
+  "engines": {
+    "opencode": ">=2.0.0 <3"
+  },
+  "dependencies": {
+    "@opencode/plugin": "^2.0.3"
+  }
+}

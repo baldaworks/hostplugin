@@ -110,8 +110,8 @@ or runtime contract because the standard defines none.
 For OpenCode v2 package distribution, follow the packaging and publication
 sections in `../../references/opencode.md`. Include the native `package.json`,
 entrypoint, bundled resources, and consumer install command in the authored
-plugin. These are output files for the requested plugin, not a reason to add a
-runtime to HostPlugin itself.
+plugin. Keep a skill-only package entrypoint limited to registering its bundled
+instruction assets; do not add servers, hooks, tools, or unrelated behavior.
 
 ### 5. Present the preview
 

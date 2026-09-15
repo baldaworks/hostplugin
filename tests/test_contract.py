@@ -1,11 +1,12 @@
 import json
 import pathlib
+import subprocess
 import unittest
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "plugins" / "hostplugin"
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 AGENT_PLUGINS_SCHEMA = (
     "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
 )
@@ -314,8 +315,46 @@ class ContractTests(unittest.TestCase):
         for path in source_refs.glob("*.md"):
             self.assertEqual(path.read_bytes(), (installed_refs / path.name).read_bytes())
 
+    def test_opencode_package_registers_packaged_skill(self):
+        package = load_json("package.json")
+        self.assertEqual("hostplugin", package["name"])
+        self.assertEqual(VERSION, package["version"])
+        self.assertEqual("./integrations/opencode/index.js", package["exports"])
+        self.assertEqual("^2.0.3", package["dependencies"]["@opencode/plugin"])
+        self.assertIn("integrations/opencode/skills/", package["files"])
+        self.assertIn("integrations/opencode/references/", package["files"])
+
+        script = """
+          import plugin from './integrations/opencode/index.js'
+          const registered = []
+          await plugin.setup({
+            skill: {
+              async transform(callback) {
+                callback({ add(skill) { registered.push(skill) } })
+              },
+            },
+          })
+          if (plugin.id !== 'hostplugin') throw new Error('wrong plugin id')
+          if (registered.length !== 1) throw new Error('wrong registration count')
+          const skill = registered[0]
+          if (skill.id !== 'hostplugin-author') throw new Error('wrong skill id')
+          if (!skill.location.endsWith('/integrations/opencode/skills/hostplugin-author/SKILL.md')) {
+            throw new Error('wrong skill location')
+          }
+          if (!skill.content.includes('# HostPlugin Author')) throw new Error('missing content')
+          if (skill.content.startsWith('---')) throw new Error('frontmatter was not removed')
+        """
+        subprocess.run(
+            ["node", "--input-type=module", "--eval", script],
+            cwd=ROOT,
+            check=True,
+        )
+
     def test_readme_documents_all_hosts(self):
         text = read("README.md")
+        self.assertNotIn("git clone", text)
+        self.assertNotIn("cp -R", text)
+        self.assertNotRegex(text, r"\bv1\b|migrat")
         self.assertIn(
             """### Codex
 
@@ -333,7 +372,7 @@ codex plugin add hostplugin@hostplugin
             "grok plugin install 'baldaworks/hostplugin#plugins/hostplugin' --trust",
             "copilot plugin marketplace add baldaworks/hostplugin",
             "agent plugin marketplace add",
-            "integrations/opencode",
+            "opencode plugin add 'github:baldaworks/hostplugin#v0.3.0'",
             "Agent Plugins 1.0.0",
             "plugins/hostplugin",
             "universal installation command, marketplace",
