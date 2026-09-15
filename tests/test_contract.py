@@ -121,6 +121,16 @@ class ContractTests(unittest.TestCase):
         self.assertIn("name: hostplugin-author", prefixed)
         self.assertEqual(skill_body(canonical), skill_body(prefixed))
 
+    def test_skill_entrypoints_fit_codex_prompt_limit(self):
+        paths = [
+            PLUGIN / "skills/author/SKILL.md",
+            PLUGIN / "prefixed-skills/hostplugin-author/SKILL.md",
+            ROOT / "integrations/opencode/skills/hostplugin-author/SKILL.md",
+        ]
+        for path in paths:
+            with self.subTest(path=path.relative_to(ROOT)):
+                self.assertLessEqual(len(path.read_bytes()), 8_000)
+
     def test_skill_enforces_preview_and_safe_discovery(self):
         text = (PLUGIN / "skills/author/SKILL.md").read_text(encoding="utf-8")
         for fragment in [
