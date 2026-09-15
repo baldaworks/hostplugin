@@ -5,7 +5,7 @@ import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "plugins" / "hostplugin"
-VERSION = "0.1.1"
+VERSION = "0.2.0"
 AGENT_PLUGINS_SCHEMA = (
     "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
 )
@@ -178,7 +178,7 @@ class ContractTests(unittest.TestCase):
                 "https://docs.github.com/en/copilot/reference/"
                 "copilot-cli-reference/cli-plugin-reference"
             ],
-            "opencode": ["https://opencode.ai/docs/plugins"],
+            "opencode": ["https://opencode.ai/v2/docs/plugins"],
             "cursor": [
                 "https://cursor.com/docs/plugins",
                 "https://cursor.com/docs/reference/plugins",
@@ -188,7 +188,7 @@ class ContractTests(unittest.TestCase):
         for host, sources in expected_sources.items():
             with self.subTest(host=host):
                 text = (references / f"{host}.md").read_text(encoding="utf-8")
-                self.assertIn("2026-07-19", text)
+                self.assertIn("2026-09-15" if host == "opencode" else "2026-07-19", text)
                 for source in sources:
                     self.assertIn(source, text)
         matrix = (references / "capability-matrix.md").read_text(encoding="utf-8")
@@ -279,6 +279,26 @@ class ContractTests(unittest.TestCase):
         metadata = (PLUGIN / "skills/author/agents/openai.yaml").read_text(encoding="utf-8")
         self.assertIn('display_name: "HostPlugin Author"', metadata)
         self.assertIn("$hostplugin:author", metadata)
+
+    def test_opencode_v2_contract_and_capability_boundaries(self):
+        reference = read("plugins/hostplugin/references/opencode.md")
+        self.assertNotIn("https://opencode.ai/docs/", reference)
+        matrix = read("plugins/hostplugin/references/capability-matrix.md")
+        rows = [line.split("|")[1:-1] for line in matrix.splitlines()
+                if line.startswith("|")]
+        column = [cell.strip() for cell in rows[0]].index("OpenCode v2")
+        capabilities = {row[0].strip(): row[column].strip() for row in rows[2:]}
+        self.assertEqual("Unsupported (no LSP runtime)", capabilities["LSP servers"])
+        self.assertEqual("Native V2 plugin hooks/events", capabilities["Hooks"])
+        self.assertEqual("Host-specific themes; other types unsupported",
+                         capabilities["Monitors/themes/output styles"])
+        self.assertIn("instructions config inactive", capabilities["Rules/instructions"])
+
+    def test_opencode_command_keeps_skill_invocation_and_arguments(self):
+        command = read("integrations/opencode/commands/hostplugin-author.md")
+        self.assertIn("`hostplugin-author` skill", command)
+        self.assertIn("$ARGUMENTS", command)
+        self.assertTrue((ROOT / "docs/research/opencode-v2.md").is_file())
 
     def test_opencode_distribution_matches_prefixed_skill_and_references(self):
         source_skill = PLUGIN / "prefixed-skills/hostplugin-author/SKILL.md"

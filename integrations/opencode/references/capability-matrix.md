@@ -4,20 +4,25 @@ Use this matrix as a routing index, not as permission to invent a format. Read
 the reference for every selected host or portable standard and verify current
 local CLI behavior for host targets before writing.
 
-Last reviewed: 2026-08-11.
+Last reviewed: 2026-09-15 (OpenCode v2 column; other targets retain their references).
 
-| Component | Codex | Claude Code | Grok Build | Copilot CLI | OpenCode | Cursor | Agent Plugins 1.0.0 |
+| Component | Codex | Claude Code | Grok Build | Copilot CLI | OpenCode v2 | Cursor | Agent Plugins 1.0.0 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Skills | Native | Native | Native | Native | Native | Native | Native |
 | Commands | No plugin field | Native/legacy | Claude-compatible | Native | Native | Native | Unsupported in portable core |
 | Agents/subagents | Not a Codex plugin component | Native | Native | Native | Native | Native | Unsupported in portable core |
-| Hooks | Native (trust-gated) | Native | Native | Native | Native JS/TS plugin events | Native | Unsupported in portable core |
+| Hooks | Native (trust-gated) | Native | Native | Native | Native V2 plugin hooks/events | Native | Unsupported in portable core |
 | MCP servers | Native | Native | Native | Native | Native config | Native | Native |
-| LSP servers | Not a Codex plugin component | Native | Native | Native | Host configuration only | Verify per plugin contract | Unsupported in portable core |
-| Rules/instructions | Skill or project instructions | Plugin skills/components | Claude-compatible | Skill or agent | AGENTS.md/skills | Native rules | Unsupported in portable core |
+| LSP servers | Not a Codex plugin component | Native | Native | Native | Unsupported (no LSP runtime) | Verify per plugin contract | Unsupported in portable core |
+| Rules/instructions | Skill or project instructions | Plugin skills/components | Claude-compatible | Skill or agent | AGENTS.md/skills; instructions config inactive | Native rules | Unsupported in portable core |
 | Apps | Native Codex app manifest | Unsupported as Codex apps | Unsupported as Codex apps | Unsupported as Codex apps | Unsupported as Codex apps | MCP Apps are a different contract | Unsupported in portable core |
-| Monitors/themes/output styles | Unsupported | Host-specific | Verify Claude compatibility | Unsupported | Unsupported | Unsupported | Unsupported in portable core |
-| Executables | Use skill instructions or app/MCP | Native `bin/` | Verify compatibility | Plugin extensions or declared components | npm/local JS/TS plugin | Verify plugin contract | Unsupported in portable core |
+| Monitors/themes/output styles | Unsupported | Host-specific | Verify Claude compatibility | Unsupported | Host-specific themes; other types unsupported | Unsupported | Unsupported in portable core |
+| Executables | Use skill instructions or app/MCP | Native `bin/` | Verify compatibility | Plugin extensions or declared components | V2 npm/local JS/TS plugin | Verify plugin contract | Unsupported in portable core |
+
+OpenCode targets 2.x. Its executable plugin API is incompatible with V1;
+file-based skills and commands keep their paths. LSP configuration acceptance
+does not provide an LSP runtime. Themes use the terminal-specific V2 contract.
+See [OpenCode v2](opencode.md) for sources, limitations, and migration rules.
 
 ## Mapping policy
 

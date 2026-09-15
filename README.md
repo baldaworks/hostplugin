@@ -7,7 +7,7 @@ HostPlugin inspects a project or CLI, maps the requested behavior onto each host
 ## Install
 
 HostPlugin supports Codex, Claude Code, Grok Build, GitHub Copilot CLI,
-OpenCode, and Cursor. It also supports the vendor-neutral Agent Plugins 1.0.0
+OpenCode v2 (2.x), and Cursor. It also supports the vendor-neutral Agent Plugins 1.0.0
 portable package standard.
 
 ### Codex
@@ -53,7 +53,10 @@ agent plugin marketplace add https://github.com/baldaworks/hostplugin.git
 
 Then install HostPlugin from the marketplace UI and invoke the `hostplugin-author` skill.
 
-### OpenCode
+### OpenCode v2
+
+Requires OpenCode 2.x (`opencode --version`). Install the host with
+`@opencode/cli` following the [official installation guide](https://opencode.ai/v2/docs).
 
 From the project where you want to install HostPlugin, run:
 
@@ -66,6 +69,9 @@ rm -rf "$hostplugin_source"
 ```
 
 Invoke with `/hostplugin-author`. For a global installation, copy the same directories below `~/.config/opencode/` instead; keep the `skills/` and `references/` relative layout together.
+
+HostPlugin provides skills, references, and a command wrapper for OpenCode.
+Install these files using the copy commands above.
 
 ### Agent Plugins 1.0.0
 
