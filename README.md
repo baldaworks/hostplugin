@@ -1,8 +1,8 @@
 # HostPlugin
 
-**Author portable plugins for coding-agent hosts.**
+**Author and publish plugins for coding-agent hosts.**
 
-HostPlugin inspects a project or CLI, maps the requested behavior onto each host's native plugin components, previews every affected file, and writes only after explicit confirmation. It creates new standalone or embedded plugins and safely updates existing ones.
+HostPlugin inspects a project or CLI, maps the requested behavior onto each host's native plugin components, and previews the affected files. It creates standalone or embedded plugins, updates existing ones, and publishes them when requested.
 
 ## Install
 
@@ -64,7 +64,7 @@ From the project where you want to install HostPlugin, run:
 hostplugin_source="$(mktemp -d)"
 git clone --depth 1 https://github.com/baldaworks/hostplugin.git "$hostplugin_source"
 mkdir -p .opencode
-cp -R "$hostplugin_source"/integrations/opencode/{skills,references,commands} .opencode/
+cp -R "$hostplugin_source/integrations/opencode/." .opencode/
 rm -rf "$hostplugin_source"
 ```
 
@@ -95,7 +95,40 @@ HostPlugin performs read-only repository and CLI discovery, asks only for missin
 3. the exact file manifest and concise diff;
 4. validation commands and known limitations.
 
-No files are written until you confirm that preview. Unsupported components are reported and block generation until you choose to remove the target, remove the component, or explicitly redesign it.
+Confirm the file preview before HostPlugin writes the proposed plugin. An explicit publication request authorizes the routine publication steps for the agreed destination and scope. Unsupported components are reported and require a decision to remove the target, remove the component, or explicitly redesign it.
+
+### Create and publish an OpenCode v2 plugin
+
+For example, invoke HostPlugin in OpenCode with:
+
+```text
+/hostplugin-author Create an OpenCode v2 plugin for this repository's CLI and publish it to our GitHub repository acme/opencode-plugin.
+```
+
+Replace `acme/opencode-plugin` with your destination. HostPlugin prepares the
+native `package.json`, plugin entrypoint, and bundled resources; checks the
+package contents; and follows the repository's release workflow. You can also
+request publication to an npm registry. Git distribution does not require an npm
+publication.
+
+Users install the resulting plugins with OpenCode's native commands. These are
+example package names and repositories to replace with your published destination:
+
+```sh
+opencode plugin add @acme/opencode-plugin@latest
+opencode plugin add github:acme/opencode-plugin
+opencode plugin add git+ssh://git@github.com/acme/opencode-plugin.git#main
+opencode plugin add 'github:acme/plugins#main::path:packages/opencode-plugin'
+```
+
+Use a specific npm version or Git tag/commit for a fixed release. The last
+example selects a package inside a repository. These commands install the native
+plugins you create; to install the HostPlugin authoring skill itself, use the
+[OpenCode instructions above](#opencode-v2).
+
+See the [OpenCode packaging and publication reference](plugins/hostplugin/references/opencode.md)
+for package checks and release steps, and the
+[official OpenCode plugin guide](https://opencode.ai/v2/docs/plugins) for installation options.
 
 ## Components
 

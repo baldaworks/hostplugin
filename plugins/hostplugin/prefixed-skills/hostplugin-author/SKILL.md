@@ -1,11 +1,11 @@
 ---
 name: hostplugin-author
-description: Author, audit, or update plugins for Agent Plugins 1.0.0, Codex, Claude Code, Grok Build, GitHub Copilot CLI, OpenCode, and Cursor. Use when an agent must inspect a project or CLI, design portable or host-native skills, commands, agents, hooks, MCP/LSP integrations, rules, or apps, scaffold either a standalone marketplace or an embedded plugin, and preview every file before writing.
+description: Create, review, update, and publish coding-agent plugins for Codex, Claude Code, Grok Build, Copilot CLI, OpenCode v2, Cursor, and Agent Plugins 1.0.0. Use for plugin component design, packaging, host installation instructions, and authorized publication.
 ---
 
 # HostPlugin Author
 
-Create or update coding-agent plugins without inventing host capabilities,
+Create, update, or publish coding-agent plugins without inventing host capabilities,
 portable-standard behavior, or CLI commands. Treat CLI integrations as the
 primary workflow while supporting Agent Plugins packages, instruction-only,
 MCP-backed, and host-specific plugins.
@@ -38,7 +38,9 @@ Treat those files as pinned guidance, not timeless truth. Prefer an installed ho
 
 ### 1. Establish the operation
 
-Determine whether the request creates a new plugin, updates an existing plugin, or audits one before an update. Resolve:
+Determine whether the request creates, updates, audits, or publishes a plugin.
+Carry existing user authorization forward; a request to publish includes the
+necessary packaging and release preparation. Resolve:
 
 - standalone marketplace repository or embedded `plugins/<name>` layout;
 - targets, distinguishing the six host targets from Agent Plugins as a portable
@@ -91,7 +93,10 @@ Use canonical skill names in namespaced hosts and plugin-prefixed names in flat-
 
 For shared semantics with incompatible wire formats, create host-specific directories and point each manifest at its own directory. Share files only when the selected hosts consume the exact same format and path semantics.
 
-For an embedded plugin, update only the selected repository marketplaces. For a standalone plugin, make the repository root the marketplace root and place the plugin below `plugins/<name>`.
+For targets that consume marketplaces, update only the selected repository
+marketplaces. A standalone marketplace uses the repository root as marketplace
+root and places plugins below `plugins/<name>`. For OpenCode-only work, use the
+native package layout in its reference; do not add a marketplace.
 
 For Agent Plugins 1.0.0, make the package directory the plugin root. Create the
 required closed-schema `plugin.json`, place Agent Skills only at immediate
@@ -101,6 +106,12 @@ manifest fields, package escapes, invalid transports or URLs, reserved
 `PLUGIN_ROOT`/`PLUGIN_DATA` overrides, unsafe placeholders, and literal secrets
 before writing. Do not create an installer, marketplace, registry, invocation,
 or runtime contract because the standard defines none.
+
+For OpenCode v2 package distribution, follow the packaging and publication
+sections in `../../references/opencode.md`. Include the native `package.json`,
+entrypoint, bundled resources, and consumer install command in the authored
+plugin. These are output files for the requested plugin, not a reason to add a
+runtime to HostPlugin itself.
 
 ### 5. Present the preview
 
@@ -135,4 +146,22 @@ reported limitation, not a success. Reinspect the final diff and report:
 - installation and invocation instructions;
 - remaining manual verification.
 
-Do not publish, tag, push, create a release, or mutate a registry unless the user separately authorizes that action.
+### 8. Publish when requested
+
+Do not publish, tag, push, create a release, or mutate a registry unless the user
+has authorized that action. A clear publication request is that authorization;
+do not ask for it again at each routine step.
+
+Use the selected host reference to prepare the package and installation command.
+Confirm the intended repository or registry from the request and existing
+metadata; ask only if the destination or visibility is genuinely missing.
+Review the exact artifact and version, run applicable checks, then perform the
+authorized commit/push/tag or registry publication using the existing project
+release workflow. Preserve existing releases and never overwrite a published
+version to retry a failure.
+
+Verify the published revision or registry version and return the real consumer
+install command. If a check or publication fails, diagnose that failure and stop
+before dependent publication steps; report what was actually published. Starting
+a host server or making model calls is not required for package metadata or
+publication documentation work; perform runtime testing only when requested.

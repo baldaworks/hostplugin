@@ -37,6 +37,11 @@ that the standard defines installation, distribution, invocation, or a runtime.
 
 Ask the user to confirm the preview. A generic request to author a plugin is not confirmation of an unseen implementation.
 
+Publication may be part of the user's original request. Reuse explicit
+authorization already given for the same destination and scope; do not require
+repeat approval for each routine commit, push, tag, or publication step. A new
+registry, visibility change, or destructive replacement needs its own decision.
+
 ## Update discipline
 
 - Inspect `git status` and the current file bytes before editing.
