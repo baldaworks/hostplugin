@@ -1,6 +1,7 @@
 import json
 import pathlib
 import subprocess
+import tempfile
 import unittest
 
 
@@ -189,7 +190,7 @@ class ContractTests(unittest.TestCase):
                 "https://docs.github.com/en/copilot/reference/"
                 "copilot-cli-reference/cli-plugin-reference"
             ],
-            "opencode": ["https://opencode.ai/v2/docs/plugins"],
+            "opencode": ["https://opencode.ai/docs/plugins"],
             "cursor": [
                 "https://cursor.com/docs/plugins",
                 "https://cursor.com/docs/reference/plugins",
@@ -199,7 +200,7 @@ class ContractTests(unittest.TestCase):
         for host, sources in expected_sources.items():
             with self.subTest(host=host):
                 text = (references / f"{host}.md").read_text(encoding="utf-8")
-                self.assertIn("2026-09-15" if host == "opencode" else "2026-07-19", text)
+                self.assertIn("2026-11-24" if host == "opencode" else "2026-07-19", text)
                 for source in sources:
                     self.assertIn(source, text)
         matrix = (references / "capability-matrix.md").read_text(encoding="utf-8")
@@ -293,7 +294,7 @@ class ContractTests(unittest.TestCase):
 
     def test_opencode_v2_contract_and_capability_boundaries(self):
         reference = read("plugins/hostplugin/references/opencode.md")
-        self.assertNotIn("https://opencode.ai/docs/", reference)
+        self.assertNotIn("https://opencode.ai/v2/docs/", reference)
         matrix = read("plugins/hostplugin/references/capability-matrix.md")
         rows = [line.split("|")[1:-1] for line in matrix.splitlines()
                 if line.startswith("|")]
@@ -330,11 +331,13 @@ class ContractTests(unittest.TestCase):
         self.assertEqual("hostplugin", package["name"])
         self.assertEqual(VERSION, package["version"])
         self.assertEqual("./integrations/opencode/index.js", package["exports"])
-        self.assertEqual("^2.0.3", package["dependencies"]["@opencode/plugin"])
+        self.assertEqual(">=2.4.1 <3", package["engines"]["opencode"])
+        self.assertEqual("2.4.1", package["dependencies"]["@opencode/plugin"])
         self.assertIn("integrations/opencode/skills/", package["files"])
         self.assertIn("integrations/opencode/references/", package["files"])
 
         script = """
+          import { fileURLToPath } from 'node:url'
           import plugin from './integrations/opencode/index.js'
           const registered = []
           await plugin.setup({
@@ -348,8 +351,11 @@ class ContractTests(unittest.TestCase):
           if (registered.length !== 1) throw new Error('wrong registration count')
           const skill = registered[0]
           if (skill.id !== 'hostplugin-author') throw new Error('wrong skill id')
-          if (!skill.location.endsWith('/integrations/opencode/skills/hostplugin-author/SKILL.md')) {
-            throw new Error('wrong skill location')
+          const expectedPath = fileURLToPath(new URL(
+            './integrations/opencode/skills/hostplugin-author/SKILL.md', import.meta.url
+          ))
+          if (skill.path !== expectedPath) {
+            throw new Error('wrong skill path')
           }
           if (!skill.content.includes('# HostPlugin Author')) throw new Error('missing content')
           if (skill.content.startsWith('---')) throw new Error('frontmatter was not removed')
@@ -359,6 +365,30 @@ class ContractTests(unittest.TestCase):
             cwd=ROOT,
             check=True,
         )
+
+    def test_authored_opencode_example_registers_its_own_packaged_skill(self):
+        reference = read("plugins/hostplugin/references/opencode.md")
+        example = reference.split("```js\n", 1)[1].split("\n```", 1)[0]
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            entry = root / "index.mjs"
+            entry.write_text(example)
+            skill = root / "skills/review/SKILL.md"
+            skill.parent.mkdir(parents=True)
+            skill.write_text("---\nname: review\n---\nReview the diff.\n")
+            script = """
+              const {default: plugin} = await import(process.argv[1])
+              await plugin.setup({skill: {transform: fn => fn({add: value => {
+                console.log(JSON.stringify(value))
+              }})}})
+            """
+            result = subprocess.check_output(
+                ["node", "--input-type=module", "-e", script, entry.as_uri()], text=True
+            )
+            registration = json.loads(result)
+            self.assertEqual("review", registration["id"])
+            self.assertEqual(str(skill), registration["path"])
+            self.assertEqual("Review the diff.\n", registration["content"])
 
     def test_readme_documents_all_hosts(self):
         text = read("README.md")
@@ -382,7 +412,7 @@ codex plugin add hostplugin@hostplugin
             "grok plugin install 'baldaworks/hostplugin#plugins/hostplugin' --trust",
             "copilot plugin marketplace add baldaworks/hostplugin",
             "agent plugin marketplace add",
-            "opencode plugin add 'github:baldaworks/hostplugin#v0.3.0'",
+            "opencode plugin add github:baldaworks/hostplugin#main",
             "Agent Plugins 1.0.0",
             "plugins/hostplugin",
             "universal installation command, marketplace",

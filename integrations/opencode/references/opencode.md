@@ -1,24 +1,24 @@
 # OpenCode v2 extension contract
 
-Last reviewed: 2026-09-15. Target: OpenCode 2.x; installed CLI checked: v2.0.3.
+Last reviewed: 2026-11-24. Target: OpenCode 2.4.1 and later 2.x releases.
 V1 is no longer the HostPlugin authoring target.
 
 ## Official references
 
-- [Installation](https://opencode.ai/v2/docs)
-- [V1 migration](https://opencode.ai/v2/docs/migrate-v1)
-- [Configuration](https://opencode.ai/v2/docs/config)
-- [Skills](https://opencode.ai/v2/docs/skills)
-- [Commands](https://opencode.ai/v2/docs/commands)
-- [Agents](https://opencode.ai/v2/docs/agents)
-- [Permissions](https://opencode.ai/v2/docs/permissions/)
-- [MCP servers](https://opencode.ai/v2/docs/mcp-servers/)
-- [Plugin distribution](https://opencode.ai/v2/docs/plugins)
-- [Plugin API](https://opencode.ai/v2/docs/build/plugins/)
-- [Plugin migration](https://opencode.ai/v2/docs/build/plugins/migrate-v1)
-- [CLI plugins](https://opencode.ai/v2/docs/build/plugins/cli/)
-- [Instructions](https://opencode.ai/v2/docs/instructions)
-- [Themes](https://opencode.ai/v2/docs/themes)
+- [Installation](https://opencode.ai/docs)
+- [V1 migration](https://opencode.ai/docs/migrate-v1)
+- [Configuration](https://opencode.ai/docs/config)
+- [Skills](https://opencode.ai/docs/skills)
+- [Commands](https://opencode.ai/docs/commands)
+- [Agents](https://opencode.ai/docs/agents)
+- [Permissions](https://opencode.ai/docs/permissions/)
+- [MCP servers](https://opencode.ai/docs/mcp-servers/)
+- [Plugin distribution](https://opencode.ai/docs/plugins)
+- [Plugin API](https://opencode.ai/docs/build/plugins/)
+- [Plugin migration](https://opencode.ai/docs/build/plugins/migrate-v1)
+- [CLI plugins](https://opencode.ai/docs/build/plugins/tui/)
+- [Instructions](https://opencode.ai/docs/instructions)
+- [Themes](https://opencode.ai/docs/themes)
 - [npm pack](https://docs.npmjs.com/cli/v11/commands/npm-pack)
 - [npm publish](https://docs.npmjs.com/cli/v11/commands/npm-publish)
 
@@ -116,8 +116,41 @@ A manifest alone does not implement components. When the requested plugin
 bundles skills or commands, its entrypoint registers them through the matching
 V2 API; read packaged content relative to the module location, not the consumer's
 working directory. Preserve the intended skill instructions and command
-arguments. Add `./tui` only for a requested terminal extension. Do not introduce
-hooks, tools, or dependencies unrelated to the requested behavior.
+arguments. Set the OpenCode engine floor to the oldest version verified with
+the chosen API (2.4.1 for this example). Use a compatible version of
+`@opencode/plugin` when importing the SDK.
+
+For example, ship this ES module as the package's root export and include
+`skills/review/SKILL.md` and its supporting files in the package allowlist.
+Adapt the plugin ID, skill ID, description, and path to the requested plugin.
+
+```js
+import { readFile } from "node:fs/promises"
+import { fileURLToPath } from "node:url"
+
+const path = fileURLToPath(new URL("./skills/review/SKILL.md", import.meta.url))
+
+export default {
+  id: "review-kit",
+  async setup(ctx) {
+    const markdown = await readFile(path, "utf8")
+    await ctx.skill.transform((editor) => {
+      editor.add({
+        id: "review",
+        name: "Review",
+        description: "Review a proposed change.",
+        path,
+        content: markdown.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, ""),
+      })
+    })
+  },
+}
+```
+
+When verifying the generated package on OpenCode 2.4.1, load the unpacked
+archive in an isolated project and inspect `skill.list`. Check the registered
+ID, absolute Markdown path, instruction body and referenced assets. For other
+component types, exercise the corresponding API on the target release.
 
 Use the project's existing build/check commands when the package needs a build.
 Inside the package root, inspect `npm pack --dry-run --ignore-scripts --json`:

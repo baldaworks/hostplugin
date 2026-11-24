@@ -55,13 +55,13 @@ Then install HostPlugin from the marketplace UI and invoke the `hostplugin-autho
 
 ### OpenCode v2
 
-Requires OpenCode 2.x (`opencode --version`). Install the host with
-`@opencode/cli` following the [official installation guide](https://opencode.ai/v2/docs).
+Requires OpenCode 2.4.1 or later in the 2.x series (`opencode --version`). Install the host with
+`@opencode/cli` following the [official installation guide](https://opencode.ai/docs).
 
-Install HostPlugin from its GitHub release:
+Install HostPlugin from the main branch:
 
 ```sh
-opencode plugin add 'github:baldaworks/hostplugin#v0.3.0'
+opencode plugin add github:baldaworks/hostplugin#main
 ```
 
 Invoke with `/hostplugin-author`. The package registers the bundled skill and
@@ -122,7 +122,7 @@ plugins you create; to install the HostPlugin authoring skill itself, use the
 
 See the [OpenCode packaging and publication reference](plugins/hostplugin/references/opencode.md)
 for package checks and release steps, and the
-[official OpenCode plugin guide](https://opencode.ai/v2/docs/plugins) for installation options.
+[official OpenCode plugin guide](https://opencode.ai/docs/plugins) for installation options.
 
 ## Components
 

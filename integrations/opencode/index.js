@@ -18,7 +18,7 @@ export default {
         name: "HostPlugin Author",
         description:
           "Create, review, update, and publish coding-agent plugins for supported hosts.",
-        location: fileURLToPath(skillURL),
+        path: fileURLToPath(skillURL),
         content: body(markdown),
       })
     })
