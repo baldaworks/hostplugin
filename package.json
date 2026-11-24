@@ -1,6 +1,6 @@
 {
   "name": "hostplugin",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Author and publish plugins for coding-agent hosts.",
   "type": "module",
   "exports": "./integrations/opencode/index.js",

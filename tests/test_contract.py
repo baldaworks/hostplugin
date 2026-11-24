@@ -7,7 +7,7 @@ import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "plugins" / "hostplugin"
-VERSION = "0.3.0"
+VERSION = "0.4.0"
 AGENT_PLUGINS_SCHEMA = (
     "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
 )
@@ -412,7 +412,7 @@ codex plugin add hostplugin@hostplugin
             "grok plugin install 'baldaworks/hostplugin#plugins/hostplugin' --trust",
             "copilot plugin marketplace add baldaworks/hostplugin",
             "agent plugin marketplace add",
-            "opencode plugin add github:baldaworks/hostplugin#main",
+            "opencode plugin add github:baldaworks/hostplugin#v0.4.0",
             "Agent Plugins 1.0.0",
             "plugins/hostplugin",
             "universal installation command, marketplace",

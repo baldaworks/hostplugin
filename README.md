@@ -58,10 +58,10 @@ Then install HostPlugin from the marketplace UI and invoke the `hostplugin-autho
 Requires OpenCode 2.4.1 or later in the 2.x series (`opencode --version`). Install the host with
 `@opencode/cli` following the [official installation guide](https://opencode.ai/docs).
 
-Install HostPlugin from the main branch:
+Install HostPlugin from its GitHub release:
 
 ```sh
-opencode plugin add github:baldaworks/hostplugin#main
+opencode plugin add github:baldaworks/hostplugin#v0.4.0
 ```
 
 Invoke with `/hostplugin-author`. The package registers the bundled skill and
